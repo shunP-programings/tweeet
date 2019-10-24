@@ -1,0 +1,47 @@
+<% if flash[:info] %>
+<%= flash[:info] %>
+<% end %>
+
+<% if @tweet.errors.present? %>
+<h3>エラーがあります。</h3>
+<ul>
+  <% @tweet.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+</ul>
+<% end %>
+
+<% if session[:login_uid] %>
+  <%= form_for @tweet, url: {action: :create} do |f| %>
+  <p>
+    <%= f.text_field :message %>
+    <%= f.submit "ツイート" %>
+  </p>
+  <% end %>
+
+  <% user = User.find_by(uid: session[:login_uid]) %>
+<% end %>
+
+
+<% @tweets.each do |e| %>
+<p>
+  <%= e.message %>
+  <%= User.find(e.user_id).uid %>
+  <% if user and e.user_id == user.id %>
+    <%= link_to '削除', tweet_path(e), method: :delete, data: { confirm: '削除していいですか？' }  %>
+  <% end %>
+  <% if session[:login_uid] %>
+    <% if e.liked?(user) %>
+      <%= link_to '❤️', like_path(e), method: :delete %>
+    <% else %>
+      <%= link_to '♡', likes_path(tweet_id: e.id), method: :post %>
+    <% end %>
+  <% end %>
+</p>
+<% end %>
+
+<% if session[:login_uid] %>
+  <p><%= link_to 'ログアウト', top_logout_path %></p>
+<% else %>
+  <p><%= link_to 'ログイン', top_login_path %></p>
+<% end %>
