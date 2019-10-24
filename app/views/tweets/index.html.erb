@@ -23,18 +23,18 @@
 <% end %>
 
 
-<% @tweets.each do |e| %>
+<% @tweets.each do |t| %>
 <p>
-  <%= e.message %>
-  <%= User.find(e.user_id).uid %>
-  <% if user and e.user_id == user.id %>
-    <%= link_to '削除', tweet_path(e), method: :delete, data: { confirm: '削除していいですか？' }  %>
+  <%= t.message %>
+  <%= User.find(t.user_id).uid %>
+  <% if user and t.user_id == user.id %>
+    <%= link_to '削除', tweet_path(t), method: :delete, data: { confirm: '削除していいですか？' }  %>
   <% end %>
   <% if session[:login_uid] %>
-    <% if e.liked?(user) %>
-      <%= link_to '❤️', like_path(e), method: :delete %>
+    <% if Like.find_by(user_id: user.id, tweet_id: t.id) %>
+      <%= link_to '❤️', like_path(t), method: :delete %>
     <% else %>
-      <%= link_to '♡', likes_path(tweet_id: e.id), method: :post %>
+      <%= link_to '♡', likes_path(tweet_id: t.id), method: :post %>
     <% end %>
   <% end %>
 </p>
